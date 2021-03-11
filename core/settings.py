@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'question_manager',
     'tg_bot',
     'vk_bot',
+    'request_manager',
 ]
 
 MIDDLEWARE = [
