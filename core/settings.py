@@ -27,7 +27,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'question_manager'
+    'question_manager',
     'tg_bot',
     'vk_bot',
 ]
