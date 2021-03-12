@@ -19,6 +19,8 @@ SECRET_KEY = env('SECRET_KEY')
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
+TG_TOKEN = env('TG_TOKEN')
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -31,6 +33,7 @@ INSTALLED_APPS = [
     'tg_bot',
     'vk_bot',
     'request_manager',
+    'bot_API',
 ]
 
 MIDDLEWARE = [
