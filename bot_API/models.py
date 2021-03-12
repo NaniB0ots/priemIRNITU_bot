@@ -1,23 +1,11 @@
 from django.db import models
 
-
-class BotPlatform(models.Model):
-    platform = models.CharField(max_length=60, verbose_name='Название платформы')
-    create_bot_url = models.URLField(blank=True, verbose_name='Ссылка на создание бота')
-    description = models.TextField(blank=True, verbose_name='Инструкция по созданию бота')
-
-    class Meta:
-        verbose_name = 'Платформа чат-бота'
-        verbose_name_plural = 'Платформы чат-ботов'
-        ordering = ['platform']
-
-    def __str__(self):
-        return f'{self.platform}'
+from core.settings import BOT_PLATFORMS
 
 
 class BotInfo(models.Model):
     title = models.CharField(max_length=80, verbose_name='Название')
-    platform = models.OneToOneField(BotPlatform, verbose_name='Платформа', on_delete=models.PROTECT)
+    platform = models.CharField(max_length=80, choices=BOT_PLATFORMS, verbose_name='Платформа')
     url = models.URLField(blank=True, verbose_name='Ссылка на бота')
     start_message = models.TextField(blank=True, verbose_name='Стартовое сообщение')
     help_message = models.TextField(blank=True, verbose_name='Сообщение с помощью')

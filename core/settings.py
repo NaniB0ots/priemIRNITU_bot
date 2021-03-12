@@ -21,6 +21,7 @@ ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 TG_TOKEN = env('TG_TOKEN')
 VK_TOKEN = env('VK_TOKEN')
+BOT_PLATFORMS = [('tg', 'telegram'), ('vk', 'Вконтакте')]
 
 # Application definition
 INSTALLED_APPS = [
