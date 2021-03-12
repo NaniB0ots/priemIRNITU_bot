@@ -20,6 +20,7 @@ SECRET_KEY = env('SECRET_KEY')
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 TG_TOKEN = env('TG_TOKEN')
+VK_TOKEN = env('VK_TOKEN')
 
 # Application definition
 INSTALLED_APPS = [
