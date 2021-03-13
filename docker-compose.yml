@@ -8,3 +8,14 @@ services:
       - .:/usr/src/app/
     ports:
       - 8000:8000
+    depends_on:
+      - db
+
+  db:
+    image: postgres:12.0-alpine
+    volumes:
+      - ./data/db:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_USER=priemIRNITU
+      - POSTGRES_PASSWORD=priemIRNITU
+      - POSTGRES_DB=priemIRNITU_dev
