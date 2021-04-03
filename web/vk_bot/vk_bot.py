@@ -69,7 +69,7 @@ class VkBot(ChatBotActions):
         else:
             categories = categories_manager.get_categories(parent_category_text=event.text)
             if not categories:
-                text = 'Я вас не понимаю'
+                text = bot.get_invalid_text_answer()
                 self.send_message(user_id=user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
                 return
             text = 'Категории'

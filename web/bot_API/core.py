@@ -6,26 +6,36 @@ class ChatBotActions:
     model = models.BotCommands
     default_message = 'Скоро здесь будет что-то интересное 😉'
 
-    def get_start_message(self):
+    def get_start_message(self) -> str:
         try:
             message = self.model.objects.get(command_type='start').message
         except self.model.DoesNotExist:
             message = 'Привет!'
         return message
 
-    def get_help_message(self):
+    def get_help_message(self) -> str:
         try:
             message = self.model.objects.get(command_type='help').message
         except self.model.DoesNotExist:
             message = self.default_message
         return message
 
-    def get_about_message(self):
+    def get_about_message(self) -> str:
         try:
             message = self.model.objects.get(command_type='about').message
         except self.model.DoesNotExist:
             message = self.default_message
         return message
+
+    @staticmethod
+    def get_error_text() -> str:
+        text = 'Что-то пошло не так... Попробуйте ещё раз'
+        return text
+
+    @staticmethod
+    def get_invalid_text_answer() -> str:
+        text = 'Я Вас не понимаю. Воспользуйтесь клавиатурой'
+        return text
 
 
 class Categories:
