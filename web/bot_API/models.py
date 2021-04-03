@@ -1,6 +1,6 @@
 from django.db import models
 
-from core.settings import BOT_PLATFORMS
+from web.project.settings import BOT_PLATFORMS
 
 
 class BotInfo(models.Model):

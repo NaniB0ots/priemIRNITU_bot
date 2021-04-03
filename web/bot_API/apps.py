@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class BotApiConfig(AppConfig):
-    name = 'bot_API'
+    name = 'web.bot_API'
