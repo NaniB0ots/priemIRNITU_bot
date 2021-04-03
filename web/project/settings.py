@@ -8,8 +8,6 @@ env = environ.Env(
     # set casting, default value
     DEBUG=(bool, False)
 )
-# reading .env file
-environ.Env.read_env(env_file='.env')
 
 # False if not in os.environ
 DEBUG = env('DEBUG')
