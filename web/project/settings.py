@@ -17,10 +17,6 @@ SECRET_KEY = env('SECRET_KEY')
 
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
-TG_TOKEN = env('TG_TOKEN')
-VK_TOKEN = env('VK_TOKEN')
-BOT_PLATFORMS = [('tg', 'telegram'), ('vk', 'Вконтакте')]
-
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -103,3 +99,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 
 STATIC_URL = '/static/'
+
+# Chat bots
+TG_TOKEN = env('TG_TOKEN')
+VK_TOKEN = env('VK_TOKEN')
+COMMAND_TYPES = [('start', 'Старт'),
+                 ('help', 'Помощь'),
+                 ('about', 'Описание')]

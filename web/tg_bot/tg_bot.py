@@ -8,10 +8,7 @@ if not TG_TOKEN:
 
 
 class TelegramBot(telebot.TeleBot, ChatBotActions):
-    platform = 'tg'
-
     def infinity_polling(self, *args, **kwargs):
-        self.check_platform()
         print('Telegram бот запущен...')
         super(TelegramBot, self).infinity_polling(*args, **kwargs)
 
@@ -24,4 +21,11 @@ bot = TelegramBot(TG_TOKEN)
 def start_message(message):
     chat_id = message.chat.id
     message = bot.get_start_message()
+    bot.send_message(chat_id=chat_id, text=message)
+
+
+@bot.message_handler(commands=['help'])
+def help_message(message):
+    chat_id = message.chat.id
+    message = bot.get_help_message()
     bot.send_message(chat_id=chat_id, text=message)

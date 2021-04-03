@@ -1,31 +1,27 @@
-from bot_API.models import BotInfo
-from project.settings import BOT_PLATFORMS
+from bot_API import models
 
 
 class ChatBotActions:
-    model = BotInfo
-    platform = ''
-    object = None
-
-    def check_platform(self):
-        for platform in BOT_PLATFORMS:
-            if self.platform == platform[0]:
-                break
-        else:
-            raise ValueError(f'Указана не существующая платорма. '
-                             f'Доступные: '
-                             f'{[platform[0] for platform in BOT_PLATFORMS]}')
-
-    def get_object(self):
-        return self.model.objects.get(platform=self.platform)
+    model = models.BotCommands
+    default_message = 'Скоро здесь будет что-то интересное 😉'
 
     def get_start_message(self):
-        start_message = self.get_object().start_message
-        start_message = start_message if start_message else 'Привет!'
-        return start_message
+        try:
+            message = self.model.objects.get(command_type='start').message
+        except self.model.DoesNotExist:
+            message = 'Привет!'
+        return message
 
     def get_help_message(self):
-        pass
+        try:
+            message = self.model.objects.get(command_type='help').message
+        except self.model.DoesNotExist:
+            message = self.default_message
+        return message
 
     def get_about_message(self):
-        pass
+        try:
+            message = self.model.objects.get(command_type='about').message
+        except self.model.DoesNotExist:
+            message = self.default_message
+        return message
