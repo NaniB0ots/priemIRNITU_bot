@@ -17,7 +17,7 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
-        ordering = ['-update_date']
+        ordering = ['category']
 
     def __str__(self):
         return f'{self.category}'

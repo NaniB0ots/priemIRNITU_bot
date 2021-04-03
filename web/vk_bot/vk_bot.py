@@ -5,6 +5,7 @@ import vk_api
 from vk_api.keyboard import VkKeyboard
 from vk_api.longpoll import VkLongPoll, VkEventType
 
+from bot_API import core
 from bot_API.core import ChatBotActions
 from project.settings import VK_TOKEN
 from vk_bot.utils import keyboards
@@ -49,10 +50,31 @@ class VkBot(ChatBotActions):
                 self.message_processing(event)
 
     def message_processing(self, event):
+        categories_manager = core.Categories()
         user_id = event.user_id
         if event.text == 'Начать':
             text = self.get_start_message()
             self.send_message(user_id=user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
+
+        elif event.text == 'Основное меню':
+            text = 'Основное меню'
+            self.send_message(user_id=user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
+
+        elif event.text == 'Частые вопросы':
+            categories = categories_manager.get_categories()
+            text = 'Категории'
+            self.send_message(user_id=user_id, text=text,
+                              keyboard=keyboards.get_categories_keyboard(categories))
+
+        else:
+            categories = categories_manager.get_categories(parent_category_text=event.text)
+            if not categories:
+                text = 'Я вас не понимаю'
+                self.send_message(user_id=user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
+                return
+            text = 'Категории'
+            self.send_message(user_id=user_id, text=text,
+                              keyboard=keyboards.get_categories_keyboard(categories))
 
 
 bot = VkBot(VK_TOKEN)
