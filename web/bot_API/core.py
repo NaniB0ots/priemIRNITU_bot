@@ -1,5 +1,5 @@
-from web.bot_API.models import BotInfo
-from web.project.settings import BOT_PLATFORMS
+from bot_API.models import BotInfo
+from project.settings import BOT_PLATFORMS
 
 
 class ChatBotActions:

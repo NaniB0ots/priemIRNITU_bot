@@ -1,7 +1,7 @@
 import telebot
 
-from web.bot_API.actions import ChatBotActions
-from web.project.settings import TG_TOKEN
+from bot_API.core import ChatBotActions
+from project.settings import TG_TOKEN
 
 if not TG_TOKEN:
     raise ValueError('TG_TOKEN не может быть пустым')
