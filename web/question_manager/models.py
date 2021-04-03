@@ -4,9 +4,12 @@ from django.db import models
 
 class Category(models.Model):
     category = models.CharField(max_length=100, verbose_name='Категория')
-    parent_category_id = models.IntegerField(null=True, blank=True, verbose_name='Id родительской категории')
-    editor = models.ForeignKey(User, on_delete=models.DO_NOTHING, verbose_name='Кто изменил')
+    editor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True,
+                               verbose_name='Кто изменил')
     contains_questions = models.BooleanField(default=True, verbose_name='Содержит вопросы (иначе категории)')
+
+    parent_category = models.ForeignKey('Category', on_delete=models.CASCADE, blank=True, null=True,
+                                        related_name='category_parent_category', verbose_name='Родительская категория')
 
     creation_date = models.DateTimeField(auto_now_add=True)
     update_date = models.DateTimeField(auto_now=True)

@@ -5,7 +5,7 @@ from question_manager import models
 
 @admin.register(models.Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('category', 'parent_category_id', 'editor', 'contains_questions')
+    list_display = ('category', 'parent_category', 'editor', 'contains_questions')
     search_fields = ('category',)
     list_filter = ('contains_questions',)
     ordering = ['-update_date']
