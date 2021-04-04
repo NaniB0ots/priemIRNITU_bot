@@ -52,22 +52,29 @@ class VkBot(ChatBotActions):
     def message_processing(self, event):
         categories_manager = core.CategoriesManager()
         user_id = event.user_id
-        if event.text == 'Начать':
+        event_text = event.text
+
+        if event_text == 'Начать':
             text = self.get_start_message()
             self.send_message(user_id=user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
 
-        elif event.text == 'Основное меню':
+        elif event_text == 'Основное меню':
             text = 'Основное меню'
             self.send_message(user_id=user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
 
-        elif event.text == 'Частые вопросы':
+        elif 'Частые вопросы' in event_text:
             categories = categories_manager.get_categories()
             text = 'Категории'
             self.send_message(user_id=user_id, text=text,
                               keyboard=keyboards.get_categories_keyboard(categories))
 
         else:
-            categories = categories_manager.get_categories(parent_category_text=event.text)
+            if '« ' in event_text:
+                event_text = event_text[2:]
+            elif '<<' in event_text:
+                event_text = event_text[3:]
+
+            categories = categories_manager.get_categories(parent_category_text=event_text)
             if categories:
                 text = 'Категории'
                 self.send_message(user_id=user_id, text=text,
@@ -75,7 +82,7 @@ class VkBot(ChatBotActions):
                 return
 
             questions_manager = core.QuestionsManager()
-            questions = questions_manager.get_questions(category_text=event.text)
+            questions = questions_manager.get_questions(category_text=event_text)
             if questions:
                 for question in questions:
                     text = f'❓Вопрос:\n' \
