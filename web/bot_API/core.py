@@ -52,12 +52,12 @@ class CategoriesManager:
 
         if parent_category:
             try:
-                categories = self.model.objects.filter(parent_category=parent_category)
+                categories = self.model.objects.filter(parent=parent_category)
             except self.model.DoesNotExist:
                 return self.model.objects.none()
         else:
             try:
-                categories = self.model.objects.filter(parent_category=None)
+                categories = self.model.objects.filter(parent=None)
             except self.model.DoesNotExist:
                 return self.model.objects.none()
 

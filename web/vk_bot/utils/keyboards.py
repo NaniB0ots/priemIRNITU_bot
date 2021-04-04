@@ -19,11 +19,11 @@ def get_categories_keyboard(categories: question_manager_models.Category.objects
         keyboard.add_button(category.category, color=VkKeyboardColor.PRIMARY)
         keyboard.add_line()
 
-    if categories and categories[0].parent_category:
-        if not categories[0].parent_category.parent_category:
+    if categories and categories[0].parent:
+        if not categories[0].parent.parent:
             text = f'<< Частые вопросы'
         else:
-            text = f'<< {categories[0].parent_category.parent_category}'
+            text = f'<< {categories[0].parent.parent}'
         keyboard.add_button(text, color=VkKeyboardColor.SECONDARY)
         keyboard.add_line()
 
