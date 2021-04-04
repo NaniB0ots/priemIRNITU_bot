@@ -78,9 +78,9 @@ class VkBot(ChatBotActions):
             questions = questions_manager.get_questions(category_text=event.text)
             if questions:
                 for question in questions:
-                    text = f'Вопрос:\n' \
+                    text = f'❓Вопрос:\n' \
                            f'{question.question}\n\n' \
-                           f'Ответ:\n' \
+                           f'❗Ответ:\n' \
                            f'{question.answer}'
                     self.send_message(user_id=user_id, text=text)
                 return
