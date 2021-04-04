@@ -3,7 +3,7 @@ from django.db import models
 
 
 class Category(models.Model):
-    category = models.CharField(max_length=100, verbose_name='Категория')
+    category = models.CharField(max_length=40, verbose_name='Категория')
     editor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True,
                                verbose_name='Кто изменил')
     contains_questions = models.BooleanField(default=True, verbose_name='Содержит вопросы (иначе категории)')
@@ -24,8 +24,8 @@ class Category(models.Model):
 
 
 class Question(models.Model):
-    question = models.CharField(max_length=100, verbose_name='Вопрос')
-    answer = models.CharField(max_length=195, verbose_name='Ответ')
+    question = models.TextField(verbose_name='Вопрос')
+    answer = models.TextField(verbose_name='Ответ')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Категория')
     editor = models.ForeignKey(User, on_delete=models.DO_NOTHING, verbose_name='Кто изменил')
 

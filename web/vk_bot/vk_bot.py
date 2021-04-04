@@ -50,7 +50,7 @@ class VkBot(ChatBotActions):
                 self.message_processing(event)
 
     def message_processing(self, event):
-        categories_manager = core.Categories()
+        categories_manager = core.CategoriesManager()
         user_id = event.user_id
         if event.text == 'Начать':
             text = self.get_start_message()
@@ -68,13 +68,27 @@ class VkBot(ChatBotActions):
 
         else:
             categories = categories_manager.get_categories(parent_category_text=event.text)
-            if not categories:
+            if categories:
+                text = 'Категории'
+                self.send_message(user_id=user_id, text=text,
+                                  keyboard=keyboards.get_categories_keyboard(categories))
+                return
+
+            questions_manager = core.QuestionsManager()
+            questions = questions_manager.get_questions(category_text=event.text)
+            if questions:
+                for question in questions:
+                    text = f'Вопрос:\n' \
+                           f'{question.question}\n\n' \
+                           f'Ответ:\n' \
+                           f'{question.answer}'
+                    self.send_message(user_id=user_id, text=text)
+                return
+
+            else:
                 text = bot.get_invalid_text_answer()
                 self.send_message(user_id=user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
                 return
-            text = 'Категории'
-            self.send_message(user_id=user_id, text=text,
-                              keyboard=keyboards.get_categories_keyboard(categories))
 
 
 bot = VkBot(VK_TOKEN)
