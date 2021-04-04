@@ -4,7 +4,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 
 
 class Category(MPTTModel):
-    category = models.CharField(max_length=40, verbose_name='Категория')
+    category = models.CharField(max_length=37, unique=True, verbose_name='Категория')
     editor = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True,
                                verbose_name='Кто изменил')
     contains_questions = models.BooleanField(default=True, verbose_name='Содержит вопросы (иначе категории)')
