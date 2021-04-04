@@ -25,7 +25,14 @@ class CategoryAdmin(DraggableMPTTAdmin):
         # Если у категории есть подкатегории убираем вложенные сообщения.
         if models.Category.objects.filter(parent=category):
             self.inlines = []
+        else:
+            self.inlines = [QuestionInline]
         return category
+
+    class Media:
+        css = {
+            'all': ('css/admin/custom_admin.css',)
+        }
 
 
 @admin.register(models.Question)

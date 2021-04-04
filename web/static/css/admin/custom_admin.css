@@ -1,0 +1,9 @@
+/*body{*/
+/*    background: red;*/
+/*}*/
+
+
+.field-question textarea,
+.field-answer textarea{
+    max-width: 360px;
+}
