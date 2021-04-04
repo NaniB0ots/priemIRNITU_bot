@@ -1,14 +1,16 @@
 from django.contrib import admin
+from mptt.admin import MPTTModelAdmin
 
 from question_manager import models
 
 
 @admin.register(models.Category)
-class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('category', 'parent_category', 'editor', 'contains_questions')
-    search_fields = ('category',)
-    list_filter = ('contains_questions',)
-    ordering = ['-update_date']
+class CategoryAdmin(MPTTModelAdmin):
+    # list_display = ('category', 'parent_category', 'editor', 'contains_questions')
+    # search_fields = ('category',)
+    # list_filter = ('contains_questions',)
+    mptt_level_indent = 20
+    # ordering = ['-update_date']
 
 
 @admin.register(models.Question)
