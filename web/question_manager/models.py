@@ -24,9 +24,9 @@ class Category(MPTTModel):
 
 
 class Question(models.Model):
+    category = TreeForeignKey(Category, on_delete=models.CASCADE, verbose_name='Категория')
     question = models.TextField(verbose_name='Вопрос')
     answer = models.TextField(verbose_name='Ответ')
-    category = TreeForeignKey(Category, on_delete=models.CASCADE, verbose_name='Категория')
 
     creation_date = models.DateTimeField(auto_now_add=True)
     update_date = models.DateTimeField(auto_now=True)
