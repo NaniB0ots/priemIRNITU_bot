@@ -9,6 +9,7 @@ from bot_API.utils.PhoneNumberValidator import is_valid_phone_number
 
 from bot_API import core
 from bot_API.core import ChatBotActions
+from project.logger import logger
 from project.settings import VK_TOKEN
 from vk_bot.utils import keyboards
 from vk_bot import models
@@ -55,7 +56,7 @@ class VkBot(ChatBotActions):
         Получение обновлений от Вк.
         :return:
         """
-        print('Vk бот запущен...')
+        logger.info('Vk бот запущен...')
         for event in self.long_poll.listen():
             self.event_handling(event)
 
