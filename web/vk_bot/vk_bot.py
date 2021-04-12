@@ -5,6 +5,8 @@ import vk_api
 from vk_api.keyboard import VkKeyboard
 from vk_api.longpoll import VkLongPoll, VkEventType
 
+from bot_API.utils.PhoneNumberValidator import is_valid_phone_number
+
 from bot_API import core
 from bot_API.core import ChatBotActions
 from project.settings import VK_TOKEN
@@ -113,7 +115,13 @@ class VkBot(ChatBotActions):
     def write_phone_number_step(self, event):
         text = 'Скоро мы с вами свяжемся😉\n' \
                'Спасибо!'
-        self.send_message(user_id=event.user_id, text=text)
+        phone_number = event.text
+        if is_valid_phone_number(phone_number):
+            self.send_message(user_id=event.user_id, text=text)
+        else:
+            self.send_message(user_id=event.user_id, text='Вы ввели некорректный номер телефона😨\n'
+                                                          'Попробуйте ещё раз😌')
+            self.register_next_step(event, self.write_phone_number_step)
 
     def ask_question_step(self, event):
         text = 'Отлично!\n' \
