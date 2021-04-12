@@ -155,6 +155,8 @@ class VkBot(ChatBotActions):
             self.user.phone_number = phone_number
             self.user.save()
 
+            core.RequestManager.create_request(phone_number=phone_number, question=self.user.last_question)
+
             self.send_message(user_id=event.user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
         else:
             self.send_message(user_id=event.user_id, text='Вы ввели некорректный номер телефона😨\n'
