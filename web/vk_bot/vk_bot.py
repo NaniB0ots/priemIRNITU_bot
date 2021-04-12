@@ -9,6 +9,7 @@ from bot_API import core
 from bot_API.core import ChatBotActions
 from project.settings import VK_TOKEN
 from vk_bot.utils import keyboards
+from vk_bot import models
 
 if not VK_TOKEN:
     raise ValueError('VK_TOKEN не может быть пустым')
@@ -18,6 +19,7 @@ class VkBot(ChatBotActions):
     def __init__(self, token):
         self.vk = vk_api.VkApi(token=token)
         self.long_poll = VkLongPoll(self.vk)
+        self.user = None
 
     def send_message(self, user_id: int, text, keyboard: VkKeyboard = None):
 
@@ -44,9 +46,16 @@ class VkBot(ChatBotActions):
                 time.sleep(3)
                 continue
 
+    def get_user(self, event) -> models.VkUser:
+        user = self.vk.method("users.get", {"user_ids": event.user_id})
+        fullname = user[0]['first_name'] + ' ' + user[0]['last_name']
+        self.user = models.VkUser.objects.get_or_create(chat_id=event.user_id, name=fullname)
+        return self.user
+
     def event_handling(self, event):
-        if event.type == VkEventType.MESSAGE_NEW:
-            if event.to_me:
+        if event.to_me:
+            self.get_user(event)
+            if event.type == VkEventType.MESSAGE_NEW:
                 self.message_processing(event)
 
     def message_processing(self, event):
