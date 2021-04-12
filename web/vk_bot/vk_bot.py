@@ -151,6 +151,10 @@ class VkBot(ChatBotActions):
                'Спасибо!'
         phone_number = event.text
         if is_valid_phone_number(phone_number):
+            # сохраняем номер телефона
+            self.user.phone_number = phone_number
+            self.user.save()
+
             self.send_message(user_id=event.user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
         else:
             self.send_message(user_id=event.user_id, text='Вы ввели некорректный номер телефона😨\n'
@@ -167,6 +171,11 @@ class VkBot(ChatBotActions):
             text = 'Тогда в другой раз😊'
             self.send_message(user_id=event.user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
             return
+
+        # сохраняем вопрос
+        self.user.last_question = event.text
+        self.user.save()
+
         text = 'Отлично!\n' \
                'А теперь введите номер телефона'
         self.send_message(user_id=event.user_id, text=text)
