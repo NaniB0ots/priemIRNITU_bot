@@ -29,7 +29,7 @@ class VkBot(ChatBotActions):
     def __init__(self, token):
         self.vk = vk_api.VkApi(token=token)
         self.long_poll = VkLongPoll(self.vk)
-        self.user = None
+        self.user: models.VkUser = models.VkUser.objects.none()
         self.next_step_users: {str: NextStep} = {}
 
     def send_message(self, user_id: int, text, keyboard: VkKeyboard = None):
@@ -80,7 +80,11 @@ class VkBot(ChatBotActions):
         """
         user = self.vk.method("users.get", {"user_ids": event.user_id})
         fullname = user[0]['first_name'] + ' ' + user[0]['last_name']
-        self.user = models.VkUser.objects.get_or_create(chat_id=event.user_id, name=fullname)
+        try:
+            user_object = models.VkUser.objects.get(chat_id=event.user_id)
+        except models.VkUser.DoesNotExist:
+            user_object = models.VkUser.objects.create(chat_id=event.user_id, name=fullname)
+        self.user = user_object
         return self.user
 
     def register_next_step_by_user_id(self, user_id, callback, *args, **kwargs):
@@ -150,7 +154,7 @@ class VkBot(ChatBotActions):
             self.send_message(user_id=event.user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
         else:
             self.send_message(user_id=event.user_id, text='Вы ввели некорректный номер телефона😨\n'
-                                                          'Попробуйте ещё раз😌',)
+                                                          'Попробуйте ещё раз😌', )
             self.register_next_step(event, self.write_phone_number_step)
 
     def ask_question_step(self, event):
