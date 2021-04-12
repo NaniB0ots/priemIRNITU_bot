@@ -15,11 +15,19 @@ if not VK_TOKEN:
     raise ValueError('VK_TOKEN не может быть пустым')
 
 
+class NextStep:
+    def __init__(self, callback, *args, **kwargs):
+        self.callback = callback
+        self.args = args
+        self.kwargs = kwargs
+
+
 class VkBot(ChatBotActions):
     def __init__(self, token):
         self.vk = vk_api.VkApi(token=token)
         self.long_poll = VkLongPoll(self.vk)
         self.user = None
+        self.next_step_users: {str: NextStep} = {}
 
     def send_message(self, user_id: int, text, keyboard: VkKeyboard = None):
 
@@ -43,7 +51,7 @@ class VkBot(ChatBotActions):
             try:
                 self.polling()
             except Exception as e:
-                time.sleep(3)
+                time.sleep(1)
                 continue
 
     def get_user(self, event) -> models.VkUser:
@@ -52,11 +60,66 @@ class VkBot(ChatBotActions):
         self.user = models.VkUser.objects.get_or_create(chat_id=event.user_id, name=fullname)
         return self.user
 
+    def register_next_step_by_user_id(self, user_id, callback, *args, **kwargs):
+        """
+        Регистрация функции, которая обработает слдующий ивент по user_id
+        :param user_id:
+        :param callback:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        next_step = NextStep(callback, *args, **kwargs)
+        self.next_step_users[user_id] = next_step
+
+    def register_next_step(self, event, callback, *args, **kwargs):
+        """
+        Регистрация функции, которая обработает слдующий ивент
+        :param event:
+        :param callback:
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        user_id = event.user_id
+        self.register_next_step_by_user_id(user_id, callback, *args, **kwargs)
+
+    def processing_next_step(self, event):
+        """
+        Обработка запланированных ивентов
+        :param event:
+        :return:
+        """
+        user_id = event.user_id
+        if self.next_step_users.get(user_id):
+            next_step = self.next_step_users[user_id]
+            del self.next_step_users[user_id]
+            next_step.callback(event, *next_step.args, **next_step.kwargs)
+            return True
+
     def event_handling(self, event):
+        """
+        Обработка событий бота
+        :param event:
+        :return:
+        """
         if event.to_me:
             self.get_user(event)
-            if event.type == VkEventType.MESSAGE_NEW:
+            if self.processing_next_step(event):
+                return
+            elif event.type == VkEventType.MESSAGE_NEW:
                 self.message_processing(event)
+
+    def write_phone_number_step(self, event):
+        text = 'Скоро мы с вами свяжемся😉\n' \
+               'Спасибо!'
+        self.send_message(user_id=event.user_id, text=text)
+
+    def ask_question_step(self, event):
+        text = 'Отлично!\n' \
+               'А теперь введите номер телефона'
+        self.send_message(user_id=event.user_id, text=text)
+        self.register_next_step(event, self.write_phone_number_step)
 
     def message_processing(self, event):
         categories_manager = core.CategoriesManager()
@@ -70,6 +133,12 @@ class VkBot(ChatBotActions):
         elif event_text == 'Основное меню':
             text = 'Основное меню'
             self.send_message(user_id=user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
+
+        elif event_text == 'Заказать звонок':
+            text = 'Введите ваш вопрос'
+            self.send_message(user_id=user_id, text=text)
+
+            self.register_next_step(event, self.ask_question_step)
 
         elif 'Частые вопросы' in event_text:
             categories = categories_manager.get_categories()
