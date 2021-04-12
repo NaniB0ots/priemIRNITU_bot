@@ -175,13 +175,20 @@ class VkBot(ChatBotActions):
             self.send_message(user_id=event.user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
             return
 
+        elif not event.text:
+            self.send_message(user_id=event.user_id, text='Я такое не понимаю😒\n'
+                                                          'Попробуйте ещё раз😌',
+                              keyboard=keyboards.get_cancel_keyboard())
+            self.register_next_step(event, self.ask_question_step)
+            return
+
         # сохраняем вопрос
         self.user.last_question = event.text
         self.user.save()
 
         text = 'Отлично!\n' \
                'А теперь введите номер телефона'
-        self.send_message(user_id=event.user_id, text=text)
+        self.send_message(user_id=event.user_id, text=text, keyboard=keyboards.get_cancel_keyboard())
         self.register_next_step(event, self.write_phone_number_step)
 
     def message_processing(self, event):
