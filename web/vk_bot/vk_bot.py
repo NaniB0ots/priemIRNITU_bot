@@ -56,7 +56,7 @@ class VkBot(ChatBotActions):
         Получение обновлений от Вк.
         :return:
         """
-        logger.info('Vk бот запущен...')
+        logger.info('Вк бот запущен...')
         for event in self.long_poll.listen():
             self.event_handling(event)
 
