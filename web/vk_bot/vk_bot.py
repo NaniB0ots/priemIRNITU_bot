@@ -32,6 +32,13 @@ class VkBot(ChatBotActions):
         self.next_step_users: {str: NextStep} = {}
 
     def send_message(self, user_id: int, text, keyboard: VkKeyboard = None):
+        """
+        Отправка сообщения пользователю.
+        :param user_id:
+        :param text:
+        :param keyboard:
+        :return:
+        """
 
         values = {
             'user_id': user_id,
@@ -44,11 +51,19 @@ class VkBot(ChatBotActions):
         self.vk.method('messages.send', values)
 
     def polling(self):
+        """
+        Получение обновлений от Вк.
+        :return:
+        """
         print('Vk бот запущен...')
         for event in self.long_poll.listen():
             self.event_handling(event)
 
     def infinity_polling(self):
+        """
+        Получение обновлений от Вк без остановки.
+        :return:
+        """
         while True:
             try:
                 self.polling()
@@ -57,6 +72,11 @@ class VkBot(ChatBotActions):
                 continue
 
     def get_user(self, event) -> models.VkUser:
+        """
+        Получение или создание пользователя из базы данных.
+        :param event:
+        :return:
+        """
         user = self.vk.method("users.get", {"user_ids": event.user_id})
         fullname = user[0]['first_name'] + ' ' + user[0]['last_name']
         self.user = models.VkUser.objects.get_or_create(chat_id=event.user_id, name=fullname)
@@ -64,7 +84,7 @@ class VkBot(ChatBotActions):
 
     def register_next_step_by_user_id(self, user_id, callback, *args, **kwargs):
         """
-        Регистрация функции, которая обработает слдующий ивент по user_id
+        Регистрация функции, которая обработает слдующий ивент по user_id.
         :param user_id:
         :param callback:
         :param args:
@@ -76,7 +96,7 @@ class VkBot(ChatBotActions):
 
     def register_next_step(self, event, callback, *args, **kwargs):
         """
-        Регистрация функции, которая обработает слдующий ивент
+        Регистрация функции, которая обработает слдующий ивент.
         :param event:
         :param callback:
         :param args:
@@ -88,7 +108,7 @@ class VkBot(ChatBotActions):
 
     def processing_next_step(self, event):
         """
-        Обработка запланированных ивентов
+        Обработка запланированных ивентов.
         :param event:
         :return:
         """
@@ -101,7 +121,7 @@ class VkBot(ChatBotActions):
 
     def event_handling(self, event):
         """
-        Обработка событий бота
+        Обработка событий бота.
         :param event:
         :return:
         """
@@ -113,6 +133,11 @@ class VkBot(ChatBotActions):
                 self.message_processing(event)
 
     def write_phone_number_step(self, event):
+        """
+        Получение номера телефона пользователя.
+        :param event:
+        :return:
+        """
         text = 'Скоро мы с вами свяжемся😉\n' \
                'Спасибо!'
         phone_number = event.text
@@ -124,12 +149,22 @@ class VkBot(ChatBotActions):
             self.register_next_step(event, self.write_phone_number_step)
 
     def ask_question_step(self, event):
+        """
+        Получение вопроса пользователя для обратной связи.
+        :param event:
+        :return:
+        """
         text = 'Отлично!\n' \
                'А теперь введите номер телефона'
         self.send_message(user_id=event.user_id, text=text)
         self.register_next_step(event, self.write_phone_number_step)
 
     def message_processing(self, event):
+        """
+        Обработка текстовых сообщений.
+        :param event:
+        :return:
+        """
         categories_manager = core.CategoriesManager()
         user_id = event.user_id
         event_text = event.text
