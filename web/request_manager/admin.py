@@ -9,8 +9,6 @@ class RequestHistoryAdmin(admin.ModelAdmin):
     search_fields = ('editor', 'phone_number', 'question')
     list_filter = ('status',)
     ordering = ['-update_date']
+    exclude = ('editor',)
 
-    def get_fieldsets(self, *args, **kwargs):
-        fieldsets = super(RequestHistoryAdmin, self).get_fieldsets(*args, **kwargs)
-        print(fieldsets)
-        return fieldsets
+    readonly_fields = ('phone_number', 'question',)
