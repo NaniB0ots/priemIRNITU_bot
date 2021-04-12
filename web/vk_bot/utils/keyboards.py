@@ -29,3 +29,9 @@ def get_categories_keyboard(categories: question_manager_models.Category.objects
 
     keyboard.add_button('Основное меню', color=VkKeyboardColor.SECONDARY)
     return keyboard
+
+
+def get_cancel_keyboard() -> VkKeyboard:
+    keyboard = VkKeyboard()
+    keyboard.add_button('Отмена', color=VkKeyboardColor.SECONDARY)
+    return keyboard

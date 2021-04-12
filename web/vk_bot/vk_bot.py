@@ -138,14 +138,18 @@ class VkBot(ChatBotActions):
         :param event:
         :return:
         """
+        if event.text.lower() == 'отмена':
+            text = 'Тогда в другой раз😊'
+            self.send_message(user_id=event.user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
+            return
         text = 'Скоро мы с вами свяжемся😉\n' \
                'Спасибо!'
         phone_number = event.text
         if is_valid_phone_number(phone_number):
-            self.send_message(user_id=event.user_id, text=text)
+            self.send_message(user_id=event.user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
         else:
             self.send_message(user_id=event.user_id, text='Вы ввели некорректный номер телефона😨\n'
-                                                          'Попробуйте ещё раз😌')
+                                                          'Попробуйте ещё раз😌',)
             self.register_next_step(event, self.write_phone_number_step)
 
     def ask_question_step(self, event):
@@ -154,6 +158,10 @@ class VkBot(ChatBotActions):
         :param event:
         :return:
         """
+        if event.text.lower() == 'отмена':
+            text = 'Тогда в другой раз😊'
+            self.send_message(user_id=event.user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
+            return
         text = 'Отлично!\n' \
                'А теперь введите номер телефона'
         self.send_message(user_id=event.user_id, text=text)
@@ -177,9 +185,14 @@ class VkBot(ChatBotActions):
             text = 'Основное меню'
             self.send_message(user_id=user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
 
+        elif event.text.lower() == 'отмена':
+            text = 'Тогда в другой раз😊'
+            self.send_message(user_id=event.user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
+            return
+
         elif event_text == 'Заказать звонок':
             text = 'Введите ваш вопрос'
-            self.send_message(user_id=user_id, text=text)
+            self.send_message(user_id=user_id, text=text, keyboard=keyboards.get_cancel_keyboard())
 
             self.register_next_step(event, self.ask_question_step)
 
