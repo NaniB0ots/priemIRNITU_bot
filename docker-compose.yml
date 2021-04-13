@@ -1,20 +1,28 @@
-version: '3.7'
+version: '3'
 
 services:
   web:
     build: web/
+    restart: always
     volumes:
-      - .:/usr/src/app/
-    ports:
-      - 8080:8080
+      - ./web/static:/usr/src/web/static
     depends_on:
       - db
+    env_file:
+      - ./.env
+
+  nginx:
+    build: ./nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./web/static:/usr/src/web/static
+    depends_on:
+      - web
 
   db:
     image: postgres:12.0-alpine
     volumes:
       - ./data/db:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_USER=priemIRNITU
-      - POSTGRES_PASSWORD=priemIRNITU
-      - POSTGRES_DB=priemIRNITU_dev
+    env_file:
+      - ./.env.db
