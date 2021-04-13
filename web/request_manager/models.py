@@ -9,7 +9,8 @@ class RequestHistory(models.Model):
     editor = models.ForeignKey(User, on_delete=models.DO_NOTHING, blank=True, null=True,
                                verbose_name='Кто изменил')
 
-    status = models.CharField(max_length=150, choices=[('Отвечено', 'Отвечено'), ('Ожидает', 'Ожидает')],
+    status = models.CharField(max_length=150,
+                              choices=[('Готово', 'Готово'), ('Не валидно', 'Не валидно'), ('Ожидает', 'Ожидает')],
                               verbose_name='Статус')
 
     phone_number = models.CharField(max_length=150, verbose_name='Номер телефона')

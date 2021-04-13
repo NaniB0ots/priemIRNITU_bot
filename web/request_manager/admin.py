@@ -5,10 +5,10 @@ from request_manager import models
 
 @admin.register(models.RequestHistory)
 class RequestHistoryAdmin(admin.ModelAdmin):
-    list_display = ('status', 'editor', 'phone_number', 'question')
+    list_display = ('status', 'creation_date', 'phone_number', 'question', 'editor',)
     search_fields = ('editor', 'phone_number', 'question')
     list_filter = ('status',)
-    ordering = ['status', '-update_date']
+    ordering = ['-status', '-update_date']
     exclude = ('editor',)
 
     readonly_fields = ('phone_number', 'question',)
