@@ -12,3 +12,7 @@ class RequestHistoryAdmin(admin.ModelAdmin):
     exclude = ('editor',)
 
     readonly_fields = ('phone_number', 'question',)
+
+    def save_model(self, request, obj, form, change):
+        obj.editor = request.user  # добавляем текущего пользователя в editor
+        super(RequestHistoryAdmin, self).save_model(request, obj, form, change)
