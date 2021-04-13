@@ -5,7 +5,7 @@ services:
     build: web/
     restart: always
     volumes:
-      - .:/usr/src/app/
+      - ./web/static:/usr/src/web/static
     depends_on:
       - db
     env_file:
@@ -15,6 +15,8 @@ services:
     build: ./nginx
     ports:
       - 80:80
+    volumes:
+      - ./web/static:/usr/src/web/static
     depends_on:
       - web
 
