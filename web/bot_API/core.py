@@ -1,5 +1,6 @@
 from bot_API import models
 from question_manager import models as question_manager_models
+from request_manager import models as request_manager_models
 
 
 class ChatBotActions:
@@ -99,3 +100,19 @@ class QuestionsManager:
                 self.model.objects.none()
         else:
             self.model.objects.none()
+
+
+class RequestManager:
+    model = request_manager_models.RequestHistory
+
+    @classmethod
+    def create_request(cls, phone_number: str, question: str):
+        """
+        Создание запроса обратной связи.
+        :param phone_number:
+        :param question:
+        :return:
+        """
+        cls.model.objects.create(phone_number=phone_number,
+                                 question=question,
+                                 status='Ожидает')
