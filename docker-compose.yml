@@ -6,12 +6,17 @@ services:
     restart: always
     volumes:
       - .:/usr/src/app/
-    ports:
-      - 8080:8080
     depends_on:
       - db
     env_file:
       - ./.env
+
+  nginx:
+    build: ./nginx
+    ports:
+      - 80:80
+    depends_on:
+      - web
 
   db:
     image: postgres:12.0-alpine
