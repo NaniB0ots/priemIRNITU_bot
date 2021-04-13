@@ -1,10 +1,12 @@
 # pull official base image
 FROM python:3.9
 
-# set work directory
-WORKDIR /usr/src/app
 
-# set environment variables
+# set work directory
+RUN mkdir -p /usr/src/web/
+WORKDIR /usr/src/web/
+
+#set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
@@ -18,8 +20,13 @@ COPY run.sh .
 
 # copy project
 COPY . .
+RUN pip install -r requirements.txt
 
-RUN chmod +x ./run.sh
+
+EXPOSE 8080
+
+RUN chmod +x run.sh
 
 # run entrypoint.sh
 CMD ["./run.sh"]
+

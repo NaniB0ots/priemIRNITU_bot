@@ -1,20 +1,19 @@
-version: '3.7'
+version: '3'
 
 services:
   web:
     build: web/
+    restart: always
     volumes:
       - .:/usr/src/app/
     ports:
       - 8080:8080
     depends_on:
       - db
+    env_file:
+      - ./.env
 
   db:
     image: postgres:12.0-alpine
     volumes:
       - ./data/db:/var/lib/postgresql/data/
-    environment:
-      - POSTGRES_USER=priemIRNITU
-      - POSTGRES_PASSWORD=priemIRNITU
-      - POSTGRES_DB=priemIRNITU_dev
