@@ -191,6 +191,27 @@ class VkBot(ChatBotActions):
         self.send_message(user_id=event.user_id, text=text, keyboard=keyboards.get_cancel_keyboard())
         self.register_next_step(event, self.write_phone_number_step)
 
+    def search_step(self, event):
+        event_text = event.text.lower()
+        if event_text == 'отмена':
+            text = 'Тогда в другой раз😊'
+            self.send_message(user_id=event.user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
+            return
+        questions = core.QuestionsManager.search(event_text)
+        if not questions:
+            text = 'По вашему запросу ничего не удалось найти😔'
+            self.send_message(user_id=event.user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
+            return
+        else:
+            text = 'Результат поиска😉'
+            self.send_message(user_id=event.user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
+            for question in questions:
+                text = f'❓Вопрос:\n' \
+                       f'{question.question}\n\n' \
+                       f'❗Ответ:\n' \
+                       f'{question.answer}'
+                self.send_message(user_id=event.user_id, text=text)
+
     def message_processing(self, event):
         """
         Обработка текстовых сообщений.
@@ -225,6 +246,11 @@ class VkBot(ChatBotActions):
             text = 'Категории'
             self.send_message(user_id=user_id, text=text,
                               keyboard=keyboards.get_categories_keyboard(categories))
+        elif 'Поиск' in event_text:
+            text = 'Введите ваш вопрос'
+            self.send_message(user_id=user_id, text=text,
+                              keyboard=keyboards.get_cancel_keyboard())
+            self.register_next_step(event, self.search_step)
 
         else:
             if '« ' in event_text:

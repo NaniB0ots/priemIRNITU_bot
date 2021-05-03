@@ -1,4 +1,10 @@
+import traceback
+
+from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, SearchHeadline, TrigramSimilarity
+from django.db.models import Value
+
 from bot_API import models
+from project.logger import logger
 from question_manager import models as question_manager_models
 from request_manager import models as request_manager_models
 
@@ -100,6 +106,16 @@ class QuestionsManager:
                 self.model.objects.none()
         else:
             self.model.objects.none()
+
+    @classmethod
+    def search(cls, search_text):
+        try:
+            result = cls.model.objects.annotate(similarity=TrigramSimilarity('question', search_text)
+                                                ).filter(similarity__gt=0.3).order_by('-similarity')
+        except:
+            logger.error(traceback.format_exc())
+            result = cls.model.objects.none()
+        return result
 
 
 class RequestManager:

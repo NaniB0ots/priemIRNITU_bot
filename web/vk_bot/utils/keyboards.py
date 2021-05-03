@@ -7,7 +7,8 @@ def get_main_menu_keyboard() -> VkKeyboard:
 
     keyboard.add_button('Частые вопросы', color=VkKeyboardColor.PRIMARY)
     keyboard.add_line()
-    keyboard.add_button('Заказать звонок', color=VkKeyboardColor.SECONDARY)
+    keyboard.add_button('Заказать звонок')
+    keyboard.add_button('Поиск')
 
     return keyboard
 
