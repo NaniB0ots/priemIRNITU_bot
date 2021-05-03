@@ -1,7 +1,7 @@
 import logging
 from project.settings import DEBUG
 
-logger = logging.getLogger()
+logger = logging.getLogger(name='priemIRNITU_bot')
 logger.setLevel(logging.DEBUG)
 
 format = '%(asctime)s [%(levelname)s] %(filename)s: %(message)s'
