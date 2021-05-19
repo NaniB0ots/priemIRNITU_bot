@@ -236,7 +236,7 @@ class VkBot(ChatBotActions):
             return
 
         elif event_text == 'Заказать звонок':
-            text = 'Введите ваш вопрос'
+            text = 'Введите интересующий Вас вопрос'
             self.send_message(user_id=user_id, text=text, keyboard=keyboards.get_cancel_keyboard())
 
             self.register_next_step(event, self.ask_question_step)
