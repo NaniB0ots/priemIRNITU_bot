@@ -115,12 +115,42 @@ def message(message):
     bot.send_message(chat_id=chat_id, text=message_to_send, reply_markup=keyboards.get_categories_keyboard(categories))
 
 
-
-@bot.message_handler(commands=['Поиск'])
+@bot.message_handler(regexp='Поиск')
 def message(message):
     chat_id = message.chat.id
+    user = models.TelegramUser.objects.get_or_create(chat_id=chat_id)[0]
+    if message.from_user.first_name:
+        user.name = message.from_user.first_name
+    user.username = message.from_user.username
+    user.save()
+    message_to_send = 'Введите интересующий Вас вопрос'
+    msg = bot.send_message(chat_id=chat_id, text=message_to_send, reply_markup=keyboards.get_cancel_keyboard())
+    bot.register_next_step_handler(msg, search_processing)
 
-    pass
+
+def search_processing(message):
+    chat_id = message.chat.id
+    user = models.TelegramUser.objects.get_or_create(chat_id=chat_id)[0]
+    if message.text == 'Отмена':
+        message_to_send = 'Тогда в другой раз😊'
+        bot.send_message(chat_id=chat_id, text=message_to_send, reply_markup=keyboards.get_main_menu_keyboard())
+    else:
+        questions = core.QuestionsManager.search(message.text)
+        if not questions:
+            message_to_send = 'По вашему запросу ничего не удалось найти😔'
+            bot.send_message(chat_id=chat_id, text= message_to_send, reply_markup=keyboards.get_main_menu_keyboard())
+            return
+        else:
+            message_to_send = 'Результат поиска😉'
+            bot.send_message(chat_id=chat_id, text=message_to_send, reply_markup=keyboards.get_main_menu_keyboard())
+            for question in questions:
+                message_to_send = f'❓Вопрос:\n' \
+                                  f'{question.question}\n\n' \
+                                  f'❗Ответ:\n' \
+                                  f'{question.answer}'
+                bot.send_message(chat_id=chat_id, text=message_to_send)
+            return
+
 
 @bot.message_handler(content_types=['text'])
 def message(message):
@@ -151,6 +181,3 @@ def message(message):
         bot.send_message(chat_id=chat_id, text=message_to_send,
                          reply_markup=keyboards.get_main_menu_keyboard())
         return
-
-
-
