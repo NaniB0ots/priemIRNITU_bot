@@ -20,15 +20,13 @@ class TelegramBot(telebot.TeleBot, ChatBotActions):
 
 bot = TelegramBot(TG_TOKEN)
 categories_manager = core.CategoriesManager()
-
+questions_manager = core.QuestionsManager()
 
 # Команда /start
 @bot.message_handler(commands=['start'])
 def start_message(message):
     chat_id = message.chat.id
     user = models.TelegramUser.objects.get_or_create(chat_id=chat_id)[0]
-    print(f'{message.from_user.first_name}_{message.from_user.last_name}')
-    print(f'{message.from_user.username}')
     if message.from_user.first_name:
         user.name = message.from_user.first_name
     user.username = message.from_user.username
@@ -58,6 +56,11 @@ def message(message):
 @bot.message_handler(regexp='^Заказать звонок$')
 def message(message):
     chat_id = message.chat.id
+    user = models.TelegramUser.objects.get_or_create(chat_id=chat_id)[0]
+    if message.from_user.first_name:
+        user.name = message.from_user.first_name
+    user.username = message.from_user.username
+    user.save()
     message_to_send = 'Введите интересующий Вас вопрос'
     msg = bot.send_message(chat_id=chat_id, text=message_to_send, reply_markup=keyboards.get_cancel_keyboard())
     bot.register_next_step_handler(msg, feedback_processing)
@@ -86,7 +89,6 @@ def phone_number_processing(message):
         bot.send_message(chat_id=chat_id, text=message_to_send, reply_markup=keyboards.get_main_menu_keyboard())
     else:
         phone_number = message.text
-        print(f'Номер телефона: {phone_number}')
         if is_valid_phone_number(phone_number):
             core.RequestManager.create_request(phone_number=phone_number, question=user.last_question)
             user.phone_number = phone_number
@@ -100,15 +102,18 @@ def phone_number_processing(message):
             bot.register_next_step_handler(msg, phone_number_processing)
 
 
-@bot.message_handler(regexp='^Частые вопросы$')
+@bot.message_handler(regexp='^Частые вопросы$|^<< Частые вопросы$')
 def message(message):
     chat_id = message.chat.id
+    user = models.TelegramUser.objects.get_or_create(chat_id=chat_id)[0]
+    if message.from_user.first_name:
+        user.name = message.from_user.first_name
+    user.username = message.from_user.username
+    user.save()
     message_to_send = 'Выберите инетресующую Вас категорию'
     categories = categories_manager.get_categories()
-    print(categories)
-    bot.send_message(chat_id=chat_id, text=categories, reply_markup=keyboards.get_main_menu_keyboard())
+    bot.send_message(chat_id=chat_id, text=message_to_send, reply_markup=keyboards.get_categories_keyboard(categories))
 
-    pass
 
 
 @bot.message_handler(commands=['Поиск'])
@@ -116,3 +121,36 @@ def message(message):
     chat_id = message.chat.id
 
     pass
+
+@bot.message_handler(content_types=['text'])
+def message(message):
+    chat_id = message.chat.id
+    text = message.text
+
+    if "<<" in text:
+        text = text[3:]
+
+    categories = categories_manager.get_categories(parent_category_text=text)
+    if categories:
+        chat_id = message.chat.id
+        message_to_send = 'Выберите инетресующую Вас категорию'
+        bot.send_message(chat_id=chat_id, text=message_to_send,
+                         reply_markup=keyboards.get_categories_keyboard(categories))
+        return
+    questions = questions_manager.get_questions(category_text=text)
+    if questions:
+        for question in questions:
+            text = f'❓Вопрос:\n' \
+                   f'{question.question}\n\n' \
+                   f'❗Ответ:\n' \
+                   f'{question.answer}'
+            bot.send_message(chat_id=chat_id, text=text)
+        return
+    else:
+        message_to_send = bot.get_invalid_text_answer()
+        bot.send_message(chat_id=chat_id, text=message_to_send,
+                         reply_markup=keyboards.get_main_menu_keyboard())
+        return
+
+
+
