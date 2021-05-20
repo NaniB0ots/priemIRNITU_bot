@@ -19,12 +19,20 @@ class TelegramBot(telebot.TeleBot, ChatBotActions):
 
 
 bot = TelegramBot(TG_TOKEN)
-user = models.TelegramUser.objects.none()
+categories_manager = core.CategoriesManager()
+
 
 # Команда /start
 @bot.message_handler(commands=['start'])
 def start_message(message):
     chat_id = message.chat.id
+    user = models.TelegramUser.objects.get_or_create(chat_id=chat_id)[0]
+    print(f'{message.from_user.first_name}_{message.from_user.last_name}')
+    print(f'{message.from_user.username}')
+    if message.from_user.first_name:
+        user.name = message.from_user.first_name
+    user.username = message.from_user.username
+    user.save()
     message_to_send = bot.get_start_message()
     bot.send_message(chat_id=chat_id, text=message_to_send, reply_markup=keyboards.get_main_menu_keyboard())
 
@@ -39,6 +47,7 @@ def help_message(message):
 @bot.message_handler(regexp='^Основное меню$|^Отмена$')
 def message(message):
     chat_id = message.chat.id
+
     if message.text == 'Отмена':
         message_to_send = 'Тогда в другой раз😊'
     else:
@@ -56,6 +65,7 @@ def message(message):
 
 def feedback_processing(message):
     chat_id = message.chat.id
+    user = models.TelegramUser.objects.get_or_create(chat_id=chat_id)[0]
 
     if message.text == 'Отмена':
         message_to_send = 'Тогда в другой раз😊'
@@ -67,9 +77,9 @@ def feedback_processing(message):
         bot.register_next_step_handler(msg, phone_number_processing)
 
 
-
 def phone_number_processing(message):
     chat_id = message.chat.id
+    user = models.TelegramUser.objects.get_or_create(chat_id=chat_id)[0]
 
     if message.text == 'Отмена':
         message_to_send = 'Тогда в другой раз😊'
@@ -79,6 +89,8 @@ def phone_number_processing(message):
         print(f'Номер телефона: {phone_number}')
         if is_valid_phone_number(phone_number):
             core.RequestManager.create_request(phone_number=phone_number, question=user.last_question)
+            user.phone_number = phone_number
+            user.save()
             message_to_send = 'Заявка принята! Мы Вам перезвоним😊'
             bot.send_message(chat_id=chat_id, text=message_to_send, reply_markup=keyboards.get_main_menu_keyboard())
 
@@ -88,9 +100,13 @@ def phone_number_processing(message):
             bot.register_next_step_handler(msg, phone_number_processing)
 
 
-@bot.message_handler(regexp=['^Частые вопросы$'])
+@bot.message_handler(regexp='^Частые вопросы$')
 def message(message):
     chat_id = message.chat.id
+    message_to_send = 'Выберите инетресующую Вас категорию'
+    categories = categories_manager.get_categories()
+    print(categories)
+    bot.send_message(chat_id=chat_id, text=categories, reply_markup=keyboards.get_main_menu_keyboard())
 
     pass
 
