@@ -36,3 +36,13 @@ def get_cancel_keyboard() -> VkKeyboard:
     keyboard = VkKeyboard()
     keyboard.add_button('Отмена', color=VkKeyboardColor.SECONDARY)
     return keyboard
+
+
+def get_question_not_found_keyboard():
+    keyboard = VkKeyboard()
+    keyboard.add_button('Частые вопросы', color=VkKeyboardColor.PRIMARY)
+    keyboard.add_button('Заказать звонок', color=VkKeyboardColor.PRIMARY)
+    keyboard.add_line()
+    keyboard.add_button('Основное меню')
+
+    return keyboard

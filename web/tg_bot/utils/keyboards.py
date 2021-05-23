@@ -42,3 +42,14 @@ def get_categories_keyboard(categories: question_manager_models.Category.objects
     btn2 = types.KeyboardButton('Основное меню')
     markup.add(btn2)
     return markup
+
+
+def get_question_not_found_keyboard():
+    markup = types.ReplyKeyboardMarkup(one_time_keyboard=False, resize_keyboard=True)
+    btn1 = types.KeyboardButton('Частые вопросы')
+    btn2 = types.KeyboardButton('Заказать звонок')
+    btn3 = types.KeyboardButton('Основное меню')
+
+    markup.add(btn1, btn2)
+    markup.add(btn3)
+    return markup

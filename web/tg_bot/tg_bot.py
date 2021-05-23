@@ -132,15 +132,18 @@ def message(message):
 
 def search_processing(message):
     chat_id = message.chat.id
-    user = models.TelegramUser.objects.get_or_create(chat_id=chat_id)[0]
     if message.text == 'Отмена':
         message_to_send = 'Тогда в другой раз😊'
         bot.send_message(chat_id=chat_id, text=message_to_send, reply_markup=keyboards.get_main_menu_keyboard())
     else:
         questions = core.QuestionsManager.search(message.text)
         if not questions:
-            message_to_send = 'По вашему запросу ничего не удалось найти😔'
-            bot.send_message(chat_id=chat_id, text=message_to_send, reply_markup=keyboards.get_main_menu_keyboard())
+            core.RequestManager.create_question(question=message.text)
+            message_to_send = 'На данный момент, интересующего вопроса нет в нашей базе😔\n' \
+                              'Но не беспокойтесь, мы его записали и в ближайшее время добавим в бота🤓\n' \
+                              'Желаете оставить запрос на обратный звонок или поискать информацию в часто ' \
+                              'задаваемых вопросах?'
+            bot.send_message(chat_id=chat_id, text=message_to_send, reply_markup=keyboards.get_question_not_found_keyboard())
             return
         else:
             message_to_send = 'Результат поиска😉'

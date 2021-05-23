@@ -26,3 +26,16 @@ class RequestHistory(models.Model):
 
     def __str__(self):
         return f'{self.status} {self.editor}'
+
+
+class SearchHistory(models.Model):
+    question = models.TextField(verbose_name='Вопрос')
+    creation_date = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Запрос поиска'
+        verbose_name_plural = 'Запросы поиска'
+
+
+    def __str__(self):
+        return f'{self.creation_date} {self.editor}'

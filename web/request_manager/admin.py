@@ -16,3 +16,10 @@ class RequestHistoryAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         obj.editor = request.user  # добавляем текущего пользователя в editor
         super(RequestHistoryAdmin, self).save_model(request, obj, form, change)
+
+
+@admin.register(models.SearchHistory)
+class SearchHistoryAdmin(admin.ModelAdmin):
+    list_display = ('question', 'creation_date')
+    search_fields = ('question', 'creation_date')
+    readonly_fields = ('question',)

@@ -199,8 +199,12 @@ class VkBot(ChatBotActions):
             return
         questions = core.QuestionsManager.search(event_text)
         if not questions:
-            text = 'По вашему запросу ничего не удалось найти😔'
-            self.send_message(user_id=event.user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
+            core.RequestManager.create_question(question=event_text)
+            text = 'На данный момент, интересующего вопроса нет в нашей базе😔\n' \
+                              'Но не беспокойтесь, мы его записали и в ближайшее время добавим в бота🤓\n' \
+                              'Желаете оставить запрос на обратный звонок или поискать информацию в часто ' \
+                              'задаваемых вопросах?'
+            self.send_message(user_id=event.user_id, text=text, keyboard=keyboards.get_question_not_found_keyboard())
             return
         else:
             text = 'Результат поиска😉'

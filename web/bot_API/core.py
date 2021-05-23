@@ -112,6 +112,7 @@ class QuestionsManager:
         try:
             result = cls.model.objects.annotate(similarity=TrigramSimilarity('question', search_text)
                                                 ).filter(similarity__gt=0.3).order_by('-similarity')
+            logger.debug(f'Найдено в поиске: {result.count()}')
         except:
             logger.error(traceback.format_exc())
             result = cls.model.objects.none()
@@ -119,7 +120,8 @@ class QuestionsManager:
 
 
 class RequestManager:
-    model = request_manager_models.RequestHistory
+    request_model = request_manager_models.RequestHistory
+    search_model = request_manager_models.SearchHistory
 
     @classmethod
     def create_request(cls, phone_number: str, question: str):
@@ -129,6 +131,15 @@ class RequestManager:
         :param question:
         :return:
         """
-        cls.model.objects.create(phone_number=phone_number,
-                                 question=question,
-                                 status='Ожидает')
+        cls.request_model.objects.create(phone_number=phone_number,
+                                         question=question,
+                                         status='Ожидает')
+
+    @classmethod
+    def create_question(cls, question: str):
+        """
+        Сохранение результата поиска
+        :param question:
+        :return:
+        """
+        cls.search_model.objects.create(question=question)
