@@ -44,8 +44,15 @@ def help_message(message):
     bot.send_message(chat_id=chat_id, text=message_to_send)
 
 
+@bot.message_handler(commands=['about'])
+def about_message(message):
+    chat_id = message.chat.id
+    message_to_send = bot.get_about_message()
+    bot.send_message(chat_id=chat_id, text=message_to_send)
+
+
 @bot.message_handler(regexp='^Основное меню$|^Отмена$')
-def message(message):
+def main_menu(message):
     chat_id = message.chat.id
 
     if message.text == 'Отмена':
@@ -56,7 +63,7 @@ def message(message):
 
 
 @bot.message_handler(regexp='^Заказать звонок$')
-def message(message):
+def call_message(message):
     chat_id = message.chat.id
     user = models.TelegramUser.objects.get_or_create(chat_id=chat_id)[0]
     if message.from_user.first_name:
@@ -105,7 +112,7 @@ def phone_number_processing(message):
 
 
 @bot.message_handler(regexp='^Частые вопросы$|^<< Частые вопросы$')
-def message(message):
+def questions_message(message):
     chat_id = message.chat.id
     user = models.TelegramUser.objects.get_or_create(chat_id=chat_id)[0]
     if message.from_user.first_name:
@@ -118,7 +125,7 @@ def message(message):
 
 
 @bot.message_handler(regexp='Поиск')
-def message(message):
+def search_start(message):
     chat_id = message.chat.id
     user = models.TelegramUser.objects.get_or_create(chat_id=chat_id)[0]
     if message.from_user.first_name:
@@ -143,7 +150,8 @@ def search_processing(message):
                               'Но не беспокойтесь, мы его записали и в ближайшее время добавим в бота🤓\n' \
                               'Желаете оставить запрос на обратный звонок или поискать информацию в часто ' \
                               'задаваемых вопросах?'
-            bot.send_message(chat_id=chat_id, text=message_to_send, reply_markup=keyboards.get_question_not_found_keyboard())
+            bot.send_message(chat_id=chat_id, text=message_to_send,
+                             reply_markup=keyboards.get_question_not_found_keyboard())
             return
         else:
             message_to_send = 'Результат поиска😉'
@@ -158,7 +166,7 @@ def search_processing(message):
 
 
 @bot.message_handler(content_types=['text'])
-def message(message):
+def text_message(message):
     chat_id = message.chat.id
     text = message.text
 
