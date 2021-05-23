@@ -2,6 +2,7 @@ import telebot
 
 from bot_API import core
 from bot_API.core import ChatBotActions
+from project.logger import logger
 from project.settings import TG_TOKEN
 
 from tg_bot.utils import keyboards
@@ -14,13 +15,14 @@ if not TG_TOKEN:
 
 class TelegramBot(telebot.TeleBot, ChatBotActions):
     def infinity_polling(self, *args, **kwargs):
-        print('Telegram бот запущен...')
+        logger.info('Telegram бот запущен...')
         super(TelegramBot, self).infinity_polling(*args, **kwargs)
 
 
 bot = TelegramBot(TG_TOKEN)
 categories_manager = core.CategoriesManager()
 questions_manager = core.QuestionsManager()
+
 
 # Команда /start
 @bot.message_handler(commands=['start'])
@@ -138,7 +140,7 @@ def search_processing(message):
         questions = core.QuestionsManager.search(message.text)
         if not questions:
             message_to_send = 'По вашему запросу ничего не удалось найти😔'
-            bot.send_message(chat_id=chat_id, text= message_to_send, reply_markup=keyboards.get_main_menu_keyboard())
+            bot.send_message(chat_id=chat_id, text=message_to_send, reply_markup=keyboards.get_main_menu_keyboard())
             return
         else:
             message_to_send = 'Результат поиска😉'
