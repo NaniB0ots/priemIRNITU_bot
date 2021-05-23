@@ -226,14 +226,14 @@ class VkBot(ChatBotActions):
         user_id = event.user_id
         event_text = event.text
 
-        if event_text == 'Начать':
+        if event_text.lower() == 'начать':
             text = self.get_start_message()
             self.send_message(user_id=user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
-        elif event_text == 'Описание':
+        elif event_text.lower() == 'описание':
             text = self.get_about_message()
             self.send_message(user_id=user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
 
-        elif event_text == 'Помощь':
+        elif event_text.lower() == 'помощь':
             text = self.get_help_message()
             self.send_message(user_id=user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
 
