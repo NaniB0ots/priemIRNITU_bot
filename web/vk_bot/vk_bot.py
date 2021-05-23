@@ -230,11 +230,11 @@ class VkBot(ChatBotActions):
             text = self.get_start_message()
             self.send_message(user_id=user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
         elif event_text == 'Описание':
-            text = self.get_help_message()
+            text = self.get_about_message()
             self.send_message(user_id=user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
 
         elif event_text == 'Помощь':
-            text = self.get_about_message()
+            text = self.get_help_message()
             self.send_message(user_id=user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
 
         elif event_text == 'Основное меню':
