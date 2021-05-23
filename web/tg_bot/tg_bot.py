@@ -77,6 +77,7 @@ def feedback_processing(message):
         bot.send_message(chat_id=chat_id, text=message_to_send, reply_markup=keyboards.get_main_menu_keyboard())
     else:
         user.last_question = message.text
+        user.save()
         message_to_send = 'Введите Ваш номер телефона'
         msg = bot.send_message(chat_id=chat_id, text=message_to_send, reply_markup=keyboards.get_cancel_keyboard())
         bot.register_next_step_handler(msg, phone_number_processing)
@@ -97,7 +98,6 @@ def phone_number_processing(message):
             user.save()
             message_to_send = 'Заявка принята! Мы Вам перезвоним😊'
             bot.send_message(chat_id=chat_id, text=message_to_send, reply_markup=keyboards.get_main_menu_keyboard())
-
         else:
             message_to_send = 'Вы ввели некорректный номер телефона, попробуйте еще раз'
             msg = bot.send_message(chat_id=chat_id, text=message_to_send, reply_markup=keyboards.get_cancel_keyboard())

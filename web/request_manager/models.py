@@ -36,6 +36,5 @@ class SearchHistory(models.Model):
         verbose_name = 'Запрос поиска'
         verbose_name_plural = 'Запросы поиска'
 
-
     def __str__(self):
-        return f'{self.creation_date} {self.editor}'
+        return f'{self.creation_date}'
