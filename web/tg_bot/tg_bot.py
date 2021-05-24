@@ -31,7 +31,8 @@ def start_message(message):
     user = models.TelegramUser.objects.get_or_create(chat_id=chat_id)[0]
     if message.from_user.first_name:
         user.name = message.from_user.first_name
-    user.username = message.from_user.username
+    if message.from_user.username:
+        user.username = message.from_user.username
     user.save()
     message_to_send = bot.get_start_message()
     bot.send_message(chat_id=chat_id, text=message_to_send, reply_markup=keyboards.get_main_menu_keyboard())
@@ -61,7 +62,8 @@ def message(message):
     user = models.TelegramUser.objects.get_or_create(chat_id=chat_id)[0]
     if message.from_user.first_name:
         user.name = message.from_user.first_name
-    user.username = message.from_user.username
+    if message.from_user.username:
+        user.username = message.from_user.username
     user.save()
     message_to_send = 'Введите интересующий Вас вопрос'
     msg = bot.send_message(chat_id=chat_id, text=message_to_send, reply_markup=keyboards.get_cancel_keyboard())
@@ -110,7 +112,8 @@ def message(message):
     user = models.TelegramUser.objects.get_or_create(chat_id=chat_id)[0]
     if message.from_user.first_name:
         user.name = message.from_user.first_name
-    user.username = message.from_user.username
+    if message.from_user.username:
+        user.username = message.from_user.username
     user.save()
     message_to_send = 'Выберите инетресующую Вас категорию'
     categories = categories_manager.get_categories()
@@ -123,7 +126,8 @@ def message(message):
     user = models.TelegramUser.objects.get_or_create(chat_id=chat_id)[0]
     if message.from_user.first_name:
         user.name = message.from_user.first_name
-    user.username = message.from_user.username
+    if message.from_user.username:
+        user.username = message.from_user.username
     user.save()
     message_to_send = 'Введите интересующий Вас вопрос'
     msg = bot.send_message(chat_id=chat_id, text=message_to_send, reply_markup=keyboards.get_cancel_keyboard())
