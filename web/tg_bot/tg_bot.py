@@ -150,10 +150,7 @@ def search_processing(message):
         questions = core.QuestionsManager.search(message.text)
         if not questions:
             core.RequestManager.create_question(question=message.text)
-            message_to_send = 'На данный момент, интересующего вопроса нет в нашей базе😔\n' \
-                              'Но не беспокойтесь, мы его записали и в ближайшее время добавим в бота🤓\n' \
-                              'Желаете оставить запрос на обратный звонок или поискать информацию в часто ' \
-                              'задаваемых вопросах?'
+            message_to_send = bot.get_not_found_answer()
             bot.send_message(chat_id=chat_id, text=message_to_send,
                              reply_markup=keyboards.get_question_not_found_keyboard())
             return
@@ -172,6 +169,12 @@ def search_processing(message):
 @bot.message_handler(content_types=['text'])
 def text_message(message):
     chat_id = message.chat.id
+    user = models.TelegramUser.objects.get_or_create(chat_id=chat_id)[0]
+    if message.from_user.first_name:
+        user.name = message.from_user.first_name
+    if message.from_user.username:
+        user.username = message.from_user.username
+    user.save()
     text = message.text
 
     if "<<" in text:
@@ -194,7 +197,20 @@ def text_message(message):
             bot.send_message(chat_id=chat_id, text=text)
         return
     else:
-        message_to_send = bot.get_invalid_text_answer()
-        bot.send_message(chat_id=chat_id, text=message_to_send,
-                         reply_markup=keyboards.get_main_menu_keyboard())
-        return
+        questions = core.QuestionsManager.search(message.text)
+        if not questions:
+            core.RequestManager.create_question(question=message.text)
+            message_to_send = bot.get_not_found_answer()
+            bot.send_message(chat_id=chat_id, text=message_to_send,
+                             reply_markup=keyboards.get_question_not_found_keyboard())
+            return
+        else:
+            message_to_send = 'Результат поиска😉'
+            bot.send_message(chat_id=chat_id, text=message_to_send, reply_markup=keyboards.get_main_menu_keyboard())
+            for question in questions:
+                message_to_send = f'❓Вопрос:\n' \
+                                  f'{question.question}\n\n' \
+                                  f'❗Ответ:\n' \
+                                  f'{question.answer}'
+                bot.send_message(chat_id=chat_id, text=message_to_send)
+            return

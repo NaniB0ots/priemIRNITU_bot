@@ -200,10 +200,7 @@ class VkBot(ChatBotActions):
         questions = core.QuestionsManager.search(event_text)
         if not questions:
             core.RequestManager.create_question(question=event_text)
-            text = 'На данный момент, интересующего вопроса нет в нашей базе😔\n' \
-                   'Но не беспокойтесь, мы его записали и в ближайшее время добавим в бота🤓\n' \
-                   'Желаете оставить запрос на обратный звонок или поискать информацию в часто ' \
-                   'задаваемых вопросах?'
+            text = bot.get_not_found_answer()
             self.send_message(user_id=event.user_id, text=text, keyboard=keyboards.get_question_not_found_keyboard())
             return
         else:
@@ -288,9 +285,23 @@ class VkBot(ChatBotActions):
                 return
 
             else:
-                text = bot.get_invalid_text_answer()
-                self.send_message(user_id=user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
-                return
+                questions = core.QuestionsManager.search(event_text)
+                if not questions:
+                    core.RequestManager.create_question(question=event_text)
+                    text = bot.get_not_found_answer()
+                    self.send_message(user_id=event.user_id, text=text,
+                                      keyboard=keyboards.get_question_not_found_keyboard())
+                    return
+                else:
+                    text = 'Результат поиска😉'
+                    self.send_message(user_id=event.user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
+                    for question in questions:
+                        text = f'❓Вопрос:\n' \
+                               f'{question.question}\n\n' \
+                               f'❗Ответ:\n' \
+                               f'{question.answer}'
+                        self.send_message(user_id=event.user_id, text=text)
+                    return
 
 
 bot = VkBot(VK_TOKEN)
