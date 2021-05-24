@@ -201,9 +201,9 @@ class VkBot(ChatBotActions):
         if not questions:
             core.RequestManager.create_question(question=event_text)
             text = 'На данный момент, интересующего вопроса нет в нашей базе😔\n' \
-                              'Но не беспокойтесь, мы его записали и в ближайшее время добавим в бота🤓\n' \
-                              'Желаете оставить запрос на обратный звонок или поискать информацию в часто ' \
-                              'задаваемых вопросах?'
+                   'Но не беспокойтесь, мы его записали и в ближайшее время добавим в бота🤓\n' \
+                   'Желаете оставить запрос на обратный звонок или поискать информацию в часто ' \
+                   'задаваемых вопросах?'
             self.send_message(user_id=event.user_id, text=text, keyboard=keyboards.get_question_not_found_keyboard())
             return
         else:
@@ -226,8 +226,15 @@ class VkBot(ChatBotActions):
         user_id = event.user_id
         event_text = event.text
 
-        if event_text == 'Начать':
+        if event_text.lower() == 'начать':
             text = self.get_start_message()
+            self.send_message(user_id=user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
+        elif event_text.lower() == 'описание':
+            text = self.get_about_message()
+            self.send_message(user_id=user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
+
+        elif event_text.lower() == 'помощь':
+            text = self.get_help_message()
             self.send_message(user_id=user_id, text=text, keyboard=keyboards.get_main_menu_keyboard())
 
         elif event_text == 'Основное меню':
