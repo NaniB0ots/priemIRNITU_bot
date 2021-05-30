@@ -3,6 +3,10 @@ version: '3'
 services:
   web:
     build: web/
+    logging:
+      options:
+        max-size: "200M"
+        max-file: "4"
     restart: always
     volumes:
       - ./web/static:/usr/src/web/static
@@ -13,6 +17,10 @@ services:
 
   nginx:
     build: ./nginx
+    logging:
+      options:
+        max-size: "200M"
+        max-file: "4"
     ports:
       - 80:80
     volumes:
@@ -22,6 +30,10 @@ services:
 
   db:
     image: postgres:12.0-alpine
+    logging:
+      options:
+        max-size: "200M"
+        max-file: "4"
     volumes:
       - ./data/db:/var/lib/postgresql/data/
     env_file:
