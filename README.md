@@ -21,5 +21,6 @@
 3. Запустить проект `$ docker-compose up -d --build`
 4. Проверить статус контейнеров `$ docker-compose ps`
 5. Настроить базу данных `$ docker exec -it <priemirnitu_bot_db_1> psql -U <pg_user> -d <database> -c "CREATE EXTENSION pg_trgm;"`
-6. Созадть суперпользователя `$ docker exec -it <priemirnitu_bot_web_1> python manage.py createsuperuser`
-7. Перейти на http://<host_name>/admin и создать группы пользователей и пользователей
+6. Выполнить миграции `$ docker exec -it <priemirnitu_bot_web_1> python manage.py migrate`
+7. Созадть суперпользователя `$ docker exec -it <priemirnitu_bot_web_1> python manage.py createsuperuser`
+8. Перейти на http://<host_name>/admin и создать группы пользователей и пользователей
