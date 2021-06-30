@@ -118,8 +118,9 @@ class QuestionsManager:
     @classmethod
     def search(cls, search_text):
         try:
-            result = cls.model.objects.annotate(similarity=TrigramSimilarity('question', search_text)
-                                                ).filter(similarity__gt=0.3).order_by('-similarity')
+            result = cls.model.objects.annotate(
+                                                similarity=TrigramSimilarity('question', search_text)).\
+                filter(similarity__gt=0.01).order_by('-similarity')
             logger.debug(f'Найдено в поиске: {result.count()}')
         except:
             logger.error(traceback.format_exc())
