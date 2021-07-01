@@ -1,12 +1,13 @@
 import traceback
 
 from django.contrib.postgres.search import SearchVector, SearchQuery, SearchRank, SearchHeadline, TrigramSimilarity
-from django.db.models import Value
+from django.db.models import Value, Q
 
 from bot_API import models
 from project.logger import logger
 from question_manager import models as question_manager_models
 from request_manager import models as request_manager_models
+from bot_API.utils.search import str_q_and
 
 
 class ChatBotActions:
@@ -47,9 +48,9 @@ class ChatBotActions:
     @staticmethod
     def get_not_found_answer() -> str:
         text = 'На данный момент, такого вопроса нет в нашей базе😔\n' \
-                'Но не беспокойтесь, мы его записали и в ближайшее время добавим в бота🤓\n' \
-                'Желаете оставить запрос на обратный звонок или поискать информацию в часто ' \
-                'задаваемых вопросах?'
+               'Но не беспокойтесь, мы его записали и в ближайшее время добавим в бота🤓\n' \
+               'Желаете оставить запрос на обратный звонок или поискать информацию в часто ' \
+               'задаваемых вопросах?'
         return text
 
 
@@ -118,10 +119,11 @@ class QuestionsManager:
     @classmethod
     def search(cls, search_text):
         try:
-            result = cls.model.objects.annotate(
-                                                similarity=TrigramSimilarity('question', search_text)).\
-                filter(similarity__gt=0.01).order_by('-similarity')
-            logger.debug(f'Найдено в поиске: {result.count()}')
+            result = cls.model.objects.annotate(similarity=TrigramSimilarity('question', search_text))\
+                .filter(Q(similarity__gt=0.3) | str_q_and(field='question__icontains', data=search_text))\
+                .order_by('-similarity')
+            result = list(result)
+            logger.debug(f'Найдено в поиске: {len(result)}')
         except:
             logger.error(traceback.format_exc())
             result = cls.model.objects.none()
